@@ -9,7 +9,7 @@ from django.contrib import messages
 # Create your views here.
 def user_login(request):
     if request.method == "POST":
-        form = CustomUserLoginForm(request.POST)
+        form = CustomUserLoginForm(data = request.POST)
         #print('post data', request.POST)
         if form.is_valid():
             user = authenticate(request,
