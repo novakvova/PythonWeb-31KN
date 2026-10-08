@@ -44,19 +44,26 @@
                         Головна
                     </a>
                 </li>
-
+                {%if not user.is_authenticated%}
                 <li class="nav-item">
-                    <a class="nav-link" href="/about/">
-                        Про нас
+                    <a class="nav-link" href="/users/register/">
+                        Реєстрація
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/contact/">
-                        Контакти
+                    <a class="nav-link" href="/users/login/">
+                        Вхід
                     </a>
                 </li>
-
+                {%else%}
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/profile">Привіт! {{user.username}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/logout">Вийти</a>
+                </li>
+                {%endif%}
             </ul>
 
         </div>
