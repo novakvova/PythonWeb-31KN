@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
-from .forms import CustomUserLoginForm, CustomUserCreationForm
+from .forms import CustomUserLoginForm, CustomUserCreationForm, CustomPasswordResetForm
 from .utils import save_custom_image
 from django.contrib import messages
 
@@ -53,3 +53,19 @@ def user_register(request):
 def user_logout(request):
     logout(request)
     return redirect('homepage')
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        form = CustomPasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(request)
+            return redirect('users:password_reset_done')
+        else:
+            messages.info(request, 'Виникли помилки при заповненні форми')
+    else:
+        form = CustomPasswordResetForm()
+
+    return render(request, 'password_reset.html', {'form': form})
+
+def password_reset_done(request):
+    return render(request, 'password_reset_done.html')

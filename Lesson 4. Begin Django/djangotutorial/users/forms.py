@@ -1,5 +1,10 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django import forms
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 from users.models import CustomUser
 
@@ -74,3 +79,36 @@ class CustomUserCreationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Паролі не співпадають.")
         return password2
+
+
+class CustomPasswordResetForm(forms.Form):
+    email = forms.EmailField(
+        label='Електронна пошта',
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError("Користувача з такою поштою не знайдено")
+        return email
+
+    def save(self, request):
+        email = self.cleaned_data['email']
+        user = CustomUser.objects.get(email=email)
+
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_link = request.build_absolute_uri(
+            f'/users/reset/{uid}/{token}/'
+        )
+
+        subject = 'Відновлення пароля'
+        message = render_to_string('password_reset_email.html', {
+            'user': user,
+            'reset_link': reset_link,
+        })
+
+        send_mail(subject, message, None, [email])

@@ -133,12 +133,16 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# MAILERS = {
+#     'default': {
+#         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+#         "HOST": "smtp.ukr.net",
+#         "PORT": 2525,
+#         "USE_SSL": True,
+#         "USERNAME": "super.novakvova@ukr.net",
+#         "PASSWORD": "PZ6nPNdWF0CjUHBb",
+#     },
+# }
 
 IMAGES_URL = '/images/'
 
@@ -151,3 +155,13 @@ DJANGORESIZED_DEFAULT_KEEP_META = True
 DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'WEBP'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'WEBP': ".webp"}
 DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ukr.net'
+EMAIL_PORT = 2525
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'super.novakvova@ukr.net'
+EMAIL_HOST_PASSWORD = 'PZ6nPNdWF0CjUHBb'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

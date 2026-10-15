@@ -3,61 +3,68 @@
 {% block content %}
 <div class="d-flex justify-content-center align-items-center">
 
-<div class="container">
-    <div class="row justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
 
-        <div class="col-lg-8 col-xl-7">
+            <div class="col-lg-8 col-xl-7">
 
-            <div class="card shadow-lg p-4">
-                <div class="card-header text-center bg-white border-0">
-                    <h2 class="fw-bold">Вхід</h2>
-                </div>
+                <div class="card shadow-lg p-4">
+                    <div class="card-header text-center bg-white border-0">
+                        <h2 class="fw-bold">Вхід</h2>
+                    </div>
 
-                <div class="card-body">
-                    <form method="post">
+                    <div class="card-body">
+                        <form method="post">
 
-                        {% csrf_token %}
+                            {% csrf_token %}
 
-                        {% if form.errors %}
-                        <div class="alert alert-danger">
-                            {% for field in form %}
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                {% for field in form %}
                                 {% for error in field.errors %}
-                                    <p>{{ field.label }}: {{ error }}</p>
+                                <p>{{ field.label }}: {{ error }}</p>
                                 {% endfor %}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
 
-                        <div class="mb-3">
-                            <label class="form-label">{{form.username.label}}</label>
-                            {{form.username}}
-                            {% if form.username.errors %}
+                            <div class="mb-3">
+                                <label class="form-label">{{form.username.label}}</label>
+                                {{form.username}}
+                                {% if form.username.errors %}
                                 <div class="text-danger">{{ form.username.errors }}</div>
-                            {% endif %}
-                        </div>
+                                {% endif %}
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">{{form.password.label}}</label>
-                            {{form.password}}
-                            {% if form.password.errors %}
+                            <div class="mb-3">
+                                <label class="form-label">{{form.password.label}}</label>
+                                {{form.password}}
+                                {% if form.password.errors %}
                                 <div class="text-danger">{{ form.password.errors }}</div>
-                            {% endif %}
-                        </div>
+                                {% endif %}
+                            </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            Вхід
-                        </button>
+                            <div class="mb-3 d-flex justify-content-end h5">
+                                <a href="{% url 'users:password_reset' %}"
+                                   class="small link-primary link-opacity-75-hover link-underline-opacity-0">
+                                    Забули пароль?
+                                </a>
+                            </div>
 
-                    </form>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                Вхід
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-
     </div>
-</div>
 
 </div>
 {% endblock %}
