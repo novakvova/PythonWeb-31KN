@@ -106,9 +106,20 @@ class CustomPasswordResetForm(forms.Form):
         )
 
         subject = 'Відновлення пароля'
-        message = render_to_string('password_reset_email.html', {
+        html_message = render_to_string('password_reset_email.html', {
             'user': user,
             'reset_link': reset_link,
         })
+        plain_message = (
+            f'Привіт, {user.first_name}!\n\n'
+            f'Щоб встановити новий пароль, перейдіть за посиланням:\n{reset_link}\n\n'
+            f'Якщо ви не робили цей запит, проігноруйте цей лист.'
+        )
 
-        send_mail(subject, message, None, [email])
+        send_mail(
+            subject,
+            plain_message,  # текстова версія (запасна)
+            None,
+            [email],
+            html_message=html_message,  # красивий HTML-лист
+        )
