@@ -1,4 +1,6 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (AuthenticationForm,
+                                       UserCreationForm,
+                                       SetPasswordForm)
 from django import forms
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
@@ -123,3 +125,22 @@ class CustomPasswordResetForm(forms.Form):
             [email],
             html_message=html_message,  # красивий HTML-лист
         )
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="Новий пароль",
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Вкажіть новий пароль'
+        })
+    )
+
+    new_password2 = forms.CharField(
+        label="Повторіть пароль",
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Повторіть новий пароль'
+        })
+    )
