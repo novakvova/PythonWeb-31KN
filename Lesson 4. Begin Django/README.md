@@ -65,3 +65,12 @@ py manage.py startapp categories
 py manage.py makemigrations categories
 py manage.py migrate
 ```
+
+## Seed Data Django - У Windows (PowerShell):
+```
+mkdir categories\management\commands
+ni categories\management\__init__.py, categories\management\commands\__init__.py, categories\management\commands\seed.py
+
+python manage.py seed
+python manage.py seed --clear
+```
