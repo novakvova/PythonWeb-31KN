@@ -57,3 +57,11 @@ pip install Pillow
 py manage.py makemigrations users
 py manage.py migrate
 ```
+
+## Working categories Django
+```
+cd djangotutorial
+py manage.py startapp categories
+py manage.py makemigrations categories
+py manage.py migrate
+```
