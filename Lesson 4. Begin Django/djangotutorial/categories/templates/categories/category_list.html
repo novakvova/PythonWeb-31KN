@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="text-center my-4">Список категорій</h1>
+
+<div class="container">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for category in categories %}
+      <div class="col">
+        <div class="card h-100 shadow-sm text-center">
+          {% if category.image %}
+            <img src="/images/medium/{{ category.image }}"
+                 class="card-img-top"
+                 alt="{{ category.name }}"
+                 style="height: 200px; object-fit: cover;">
+          {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center"
+                 style="height: 200px;">
+              <span class="text-muted">Немає фото</span>
+            </div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title mb-0">{{ category.name }}</h5>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">Категорій поки немає.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
