@@ -71,6 +71,10 @@ py manage.py migrate
 mkdir categories\management\commands
 ni categories\management\__init__.py, categories\management\commands\__init__.py, categories\management\commands\seed.py
 
+pip install requests
+
 python manage.py seed
 python manage.py seed --clear
+
+
 ```
