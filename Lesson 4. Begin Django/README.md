@@ -76,5 +76,22 @@ pip install requests
 python manage.py seed
 python manage.py seed --clear
 
+```
+
+## Working questions Django
+```
+cd djangotutorial
+py manage.py startapp testhub
+py manage.py makemigrations testhub
+py manage.py migrate
+```
+
+## Seed Data Django - У Windows (PowerShell):
+```
+mkdir testhub\management\commands
+ni testhub\management\__init__.py, testhub\management\commands\__init__.py, testhub\management\commands\seed_data.py
+
+python manage.py seed_data
+python manage.py seed_data --clear
 
 ```
