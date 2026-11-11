@@ -44,6 +44,11 @@
                         Головна
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'testhub:list' %}">
+                        Тести
+                    </a>
+                </li>
                 {%if not user.is_authenticated%}
                 <li class="nav-item">
                     <a class="nav-link" href="/users/register/">
