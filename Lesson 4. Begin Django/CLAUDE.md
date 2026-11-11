@@ -28,7 +28,7 @@ py manage.py test                          # all tests
 py manage.py test users.tests.SomeTest.test_x   # single test
 ```
 
-`tests.py` files are currently empty stubs. Note that `DATABASES` points at a remote Neon PostgreSQL instance (SQLite config is commented out), so migrations, seeds and the test DB all hit that remote server.
+`DATABASES` points at a remote Neon PostgreSQL instance, so migrations and seeds hit that remote server. `settings.py` switches to SQLite when `'test' in sys.argv`, so `manage.py test` runs locally. Only `testhub/tests.py` has tests so far.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ Django 6.1 project `mysite` with three apps: `users`, `categories`, `testhub`.
 - **Image handling (custom, not Django FileField/MEDIA)**: images are stored as plain filename strings in `CharField`s (`CustomUser.image_small/medium/large`, `Category.image`). `users/utils.py::save_custom_image(file, size, folder)` resizes with Pillow, converts to WEBP, writes to `IMAGES_ROOT/<folder>/<uuid>.webp` (`djangotutorial/images/{small,medium,large}`) and returns only the filename. Files are served at `IMAGES_URL = '/images/'` via `static()` in `mysite/urls.py`, so templates build URLs as `/images/<folder>/<filename>`. The `DJANGORESIZED_*` settings are leftovers and not used by this code path.
 - **Password reset** is hand-rolled in `users` (custom forms/views, not Django's built-in auth views): `CustomPasswordResetForm.save()` builds the link with `default_token_generator` and sends HTML mail via the SMTP settings in `settings.py`; URLs are namespaced `users:*`.
 - **URL namespaces**: `users` and `categories` define `app_name`; root `''` is named `homepage` (used in redirects).
-- **testhub**: models only so far — `Test → Question → AnswerOption`, plus `TestResult` (taker's name, counts, start/finish times) and `TestResultAnswer`. It has no `urls.py` and is not included in `mysite/urls.py`; data comes only from `seed_data` (no app registers its models in `admin.py`).
+- **testhub** (mounted at `/tests/`): models `Test → Question → AnswerOption`, plus `TestResult` (taker's name, counts, start/finish times) and `TestResultAnswer`. Taking a test is a session-driven flow: `start` (enter name → `session["testhub_attempt_<id>"]` with `started_at`) → `take` (dynamic `TestTakeForm`, one radio `ChoiceField` per question named `question_<id>`; JS timer auto-submits at `time_limit`) → saves result, deletes the attempt key, appends the result id to `session["testhub_results"]` → `result` (viewable only if its id is in that session list). Unanswered questions count as wrong and have no `TestResultAnswer` row. Data comes only from `seed_data` (no app registers its models in `admin.py`).
 
 See `spec.md` for the full project specification and known tech-debt list.
 
@@ -66,7 +66,7 @@ See `spec.md` for the full project specification and known tech-debt list.
 ## Testing rules
 
 - Tests go in each app's `tests.py` (or a `tests/` package) using `django.test.TestCase` and `self.client`; run with `py manage.py test <app>`.
-- Tests must not run against the remote Neon database. Before adding tests, add a SQLite override for test runs in `settings.py` (e.g. switch `DATABASES` when `'test' in sys.argv`).
+- Tests must not run against the remote Neon database — keep the `'test' in sys.argv` SQLite override in `settings.py` intact.
 - The Django test runner already swaps `EMAIL_BACKEND` to locmem, so assert on `django.core.mail.outbox` (e.g. for password reset); never bypass this to send real mail.
 - Tests that save images must point `IMAGES_ROOT` at a temp dir (`@override_settings(IMAGES_ROOT=tempfile.mkdtemp())`) and use an in-memory Pillow image, not files from `images/`.
 - Seed commands that download from the network (`seed`) should be tested with `requests.get` mocked.

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Результат: {{ result.test.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-4" style="max-width: 800px;">
+  <h1 class="h3 mb-3">Результат тесту «{{ result.test.title }}»</h1>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <p class="mb-1">
+        <strong>{{ result.last_name }} {{ result.first_name }}{% if result.middle_name %} {{ result.middle_name }}{% endif %}</strong>
+      </p>
+      <p class="display-6 mb-2">{{ score }} / {{ max_score }} балів</p>
+      <ul class="list-unstyled mb-0">
+        <li class="text-success">Правильних відповідей: {{ result.correct_answers_count }}</li>
+        <li class="text-danger">Неправильних / без відповіді: {{ result.wrong_answers_count }}</li>
+        <li class="text-muted">Час проходження: {{ duration_minutes }} хв {{ duration_seconds }} с</li>
+      </ul>
+    </div>
+  </div>
+
+  {% for row in rows %}
+    <div class="card mb-3 border-{% if row.is_correct %}success{% else %}danger{% endif %}">
+      <div class="card-body">
+        <h5 class="card-title">{{ forloop.counter }}. {{ row.question.text }}</h5>
+        <p class="mb-1">
+          Ваша відповідь:
+          {% if row.selected %}
+            <span class="{% if row.is_correct %}text-success{% else %}text-danger{% endif %}">{{ row.selected.text }}</span>
+          {% else %}
+            <span class="text-muted">немає відповіді</span>
+          {% endif %}
+        </p>
+        {% if not row.is_correct %}
+          <p class="mb-0 small">
+            Правильна відповідь:
+            {% for option in row.correct_options %}<span class="text-success">{{ option.text }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+
+  <a href="{% url 'testhub:list' %}" class="btn btn-primary">До списку тестів</a>
+</div>
+{% endblock %}
