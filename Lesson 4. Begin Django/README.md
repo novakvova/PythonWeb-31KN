@@ -95,3 +95,9 @@ python manage.py seed_data
 python manage.py seed_data --clear
 
 ```
+
+## Результат роботи тестів
+```
+py manage.py makemigrations testhub
+py manage.py migrate
+```

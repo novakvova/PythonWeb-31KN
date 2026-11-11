@@ -39,3 +39,42 @@ class AnswerOption(models.Model):
 
     def __str__(self):
         return self.text
+
+#Результати тесту
+class TestResult(models.Model):
+    test = models.ForeignKey(
+        Test,
+        on_delete=models.CASCADE,
+        related_name="results"
+    )
+
+    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+
+    correct_answers_count = models.PositiveIntegerField(default=0)
+    wrong_answers_count = models.PositiveIntegerField(default=0)
+
+    started_at = models.DateTimeField()
+    finished_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name} - {self.test.title}"
+
+class TestResultAnswer(models.Model):
+    test_result = models.ForeignKey(
+        TestResult,
+        on_delete=models.CASCADE,
+        related_name="answers"
+    )
+
+    selected_answer = models.ForeignKey(
+        AnswerOption,
+        on_delete=models.CASCADE,
+        related_name="test_results"
+    )
+
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.test_result} - {self.selected_answer.text}"
