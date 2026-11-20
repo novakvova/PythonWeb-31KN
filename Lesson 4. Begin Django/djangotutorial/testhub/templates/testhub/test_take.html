@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ test.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-4" style="max-width: 800px;">
+  <div class="d-flex justify-content-between align-items-center mb-4 sticky-top bg-body py-2">
+    <h1 class="h3 mb-0">{{ test.title }}</h1>
+    <span class="badge bg-primary fs-6">
+      Залишилось: <span id="timer" data-seconds="{{ seconds_left }}">--:--</span>
+    </span>
+  </div>
+
+  <form method="post" id="test-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ forloop.counter }}. {{ field.label }}</h5>
+          <p class="small text-muted">{{ field.help_text }}</p>
+          {% for radio in field %}
+            <div class="form-check">
+              {{ radio.tag }}
+              <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+          {% endfor %}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success btn-lg">Завершити тест</button>
+  </form>
+</div>
+
+<script>
+  // Зворотний відлік; коли час вийде — форма відправляється автоматично
+  (function () {
+    const timer = document.getElementById("timer");
+    const form = document.getElementById("test-form");
+    let seconds = parseInt(timer.dataset.seconds, 10);
+
+    function tick() {
+      const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const s = String(seconds % 60).padStart(2, "0");
+      timer.textContent = `${m}:${s}`;
+      if (seconds <= 0) {
+        form.submit();
+        return;
+      }
+      seconds--;
+      setTimeout(tick, 1000);
+    }
+    tick();
+  })();
+</script>
+{% endblock %}

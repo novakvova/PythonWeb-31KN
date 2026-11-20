@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
+
 from django.db.models import Count,Sum
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from .forms import TestStartForm
+from .forms import TestStartForm, TestTakeForm
 from .models import Test
 
 
@@ -46,3 +48,25 @@ def test_start(request, test_id):
         "form": form,
         "questions_count": test.questions.count(),
     })
+
+def test_take(request, test_id):
+    #Якщо по даному test_id не знайдемо тест, то видаємо 404
+    test = get_object_or_404(Test, pk=test_id, is_active=True)
+    # із сесії отримуємо інфомрацію про людину, яка розпочала тест
+    attempt = request.session[_attempt_key(test.id)]
+    if not attempt:
+        #Спроба пройти тест не розпочата - повертаємося до введення ПІБ
+        return redirect("testhub:start", test_id=test.id)
+
+    started_at = datetime.fromisoformat(attempt["started_at"])
+    deadline =  started_at + timedelta(minutes=test.time_limit)
+    questions = test.questions.prefetch_related("options").order_by("order","id")
+
+    form = TestTakeForm(questions=questions)
+    seconds_left = max(0, int((deadline - timezone.now()).total_seconds()))
+    return render(request, "testhub/test_take.html", {
+        "test": test,
+        "form": form,
+        "seconds_left": seconds_left,
+    })
+
